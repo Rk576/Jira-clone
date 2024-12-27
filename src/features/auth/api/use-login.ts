@@ -14,7 +14,7 @@ export const useLogin=()=>{
         mutationFn: async({json}) =>{
             const response=await client.api.auth.login["$post"]({json});
             return await response.json();
-        }
+        },
     });
     return mutation;
 }

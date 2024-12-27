@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import {zValidator} from "@hono/zod-validator";
-import {loginSchema, registerSchema} from "@/features/auth/schemas";
+import {loginSchema, registerSchema} from "../schemas";
 import {createAdminClient} from "@/lib/appwrite";
 import {ID} from "node-appwrite";
 import {deleteCookie, setCookie} from "hono/cookie";
@@ -9,7 +9,7 @@ import {SessionMiddleWare} from "@/lib/SessionMiddleWare";
 
 const app = new Hono()
     .get("/current",SessionMiddleWare , (c)=>{
-        const user=c.get("user");
+        const user=c.get('user');
         return c.json({data:user});
     })
     .post("/login", zValidator("json",loginSchema),
@@ -47,7 +47,7 @@ const app = new Hono()
             password,
         );
 
-        setCookie(c,AUTH_COOKIE,session.secret,{
+        setCookie(c, AUTH_COOKIE ,session.secret,{
                 path: "/",
                 httpOnly: true,
                 sameSite: "strict",
@@ -62,6 +62,5 @@ const app = new Hono()
         await account.deleteSession("current");
         return c.json({success:true});
     })
-
 
 export default app;

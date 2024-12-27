@@ -31,6 +31,7 @@ export const SessionMiddleWare = createMiddleware<AdditionalContext>(
             .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
             .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
         const session=getCookie(c,AUTH_COOKIE);
+        console.log("Session:", session);  // Log session to see if it's set correctly
         if(!session)
         {
             return c.json({error:"Unauthorized"},401);

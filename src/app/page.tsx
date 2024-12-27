@@ -3,9 +3,9 @@
 import {useCurrent} from "@/features/auth/api/use-current";
 import {useEffect} from "react";
 import {useRouter} from "next/navigation";
-import {useLogin} from "@/features/auth/api/use-login";
 import {useLogout} from "@/features/auth/api/use-logout";
-import {Button} from "@/components/ui/button"
+import {UserButton} from "@/features/auth/components/user-button";
+
 
 export default function Home() {
   const router = useRouter();
@@ -13,6 +13,8 @@ export default function Home() {
   const { mutate } = useLogout();
 
   useEffect(() => {
+    console.log("data:", data);
+    console.log("isLoading:", isLoading);
     if(!data && !isLoading)
     {
       router.push("/sign-in")
@@ -20,11 +22,7 @@ export default function Home() {
   },[data]);
   return (
   <div>
-    <h1>Nigga supla shot</h1>
-    <Button onClick={()=>mutate()}>
-      Logout
-    </Button>
-
+    <UserButton/>
   </div>
   );
 }
