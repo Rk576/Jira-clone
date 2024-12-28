@@ -20,7 +20,7 @@ const SignUpCard=()=>{
         resolver:zodResolver(registerSchema),
         defaultValues:{name:"",email:"",password:"",},
     });
-    const {mutate}=useRegister();
+    const {mutate , isPending}=useRegister();
     const onSubmit = (values:z.infer<typeof registerSchema>)=>{
         mutate({json:values});
     }
@@ -93,7 +93,7 @@ const SignUpCard=()=>{
                                 </FormItem>
                             )}/>
 
-                        <Button disabled={false} size="lg" className="w-full ">Sign Up</Button>
+                        <Button disabled={isPending} size="lg" className="w-full ">Register</Button>
                     </form>
                 </Form>
             </CardContent>
@@ -101,11 +101,11 @@ const SignUpCard=()=>{
                 <DottedSeparator/>
             </div>
             <CardContent className="px-7 flex flex-col gap-y-4">
-                <Button variant="secondary" size="lg" className="w-full " disabled={false}>
+                <Button variant="secondary" size="lg" className="w-full " disabled={isPending}>
                     <FcGoogle className="mr-2 size-5"/>
                     Login with Google
                 </Button>
-                <Button variant="secondary" size="lg" className="w-full " disabled={false}>
+                <Button variant="secondary" size="lg" className="w-full " disabled={isPending}>
                     <FaGithub className="mr-2 size-5"/>
                     Login with Github
                 </Button>
