@@ -34,7 +34,7 @@ const routes = [
 
 export const Navigation = () =>{
     return (
-        <div className="flex flex-col">
+        <ul className="flex flex-col">
             {routes.map((item)=>{
                 const isActive = false;
                 const Icon = isActive ? item.activeIcon : item.icon;
@@ -51,6 +51,6 @@ export const Navigation = () =>{
                 );
             })}
 
-        </div>
+        </ul>
     );
 }
