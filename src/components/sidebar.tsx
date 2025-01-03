@@ -8,7 +8,7 @@ export const Sidebar = ()=>{
 return (
     <aside className="h-full bg-neutral-100 p-4 w-full">
         <Link href="/">
-            <Image src="/logoipsum-222.svg" alt="logo" width={164} height={48} />
+            <Image src="/logoipsum-222.svg" alt="logo" width={170} height={300} />
         </Link>
         <DottedSeparator className="my-4"/>
         <WorkSpaceSwitcher/>
