@@ -2,45 +2,47 @@
 
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {createWorkspaceSchema} from "@/features/workspaces/schemas";
 import {z} from "zod";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {DottedSeparator} from "@/components/dotted-separator";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {useCreateWorkspace} from "@/features/workspaces/api/use-create-workspace";
 import React, {useRef} from "react";
 import Image from "next/image";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {ImageIcon} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
+ import {useCreateProject} from "@/features/projects/api/use-create-project";
+ import {createProjectSchema} from "@/features/projects/schemas";
+ import {useWorkspaceId} from "@/features/workspaces/hooks/use-workspaceId";
 
-interface createWorkSpaceFormProps {
+interface CreateProjectFormProps {
     onCancel?: () => void;
 };
 
-export const CreateProjectForm = ({onCancel}:createWorkSpaceFormProps) => {
+export const CreateProjectForm = ({onCancel}:CreateProjectFormProps) => {
+    const workspaceId=useWorkspaceId();
     const router = useRouter();
-    const {mutate, isPending} = useCreateWorkspace();
+    const {mutate, isPending} = useCreateProject();
     const inputRef = useRef<HTMLInputElement>(null);
-    const form = useForm<z.infer<typeof createWorkspaceSchema>> ({
-        resolver: zodResolver(createWorkspaceSchema),
+    const form = useForm<z.infer<typeof createProjectSchema>> ({
+        resolver: zodResolver(createProjectSchema.omit({workspaceId: true})),
         defaultValues: {
             name: "",
         },
     });
 
-    const onSubmit = (values:z.infer<typeof createWorkspaceSchema>)=>{
+    const onSubmit = (values:z.infer<typeof createProjectSchema>)=>{
         const finalValues = {
             ...values,
+            workspaceId,
             image: values.image instanceof File ? values.image : "",
         }
         mutate({form:finalValues},{
-            onSuccess:({data})=> {
+            onSuccess:()=> {
                 form.reset();
-                router.push(`/workspaces/${data.$id}`);
             }
         })
     }
@@ -55,7 +57,7 @@ export const CreateProjectForm = ({onCancel}:createWorkSpaceFormProps) => {
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="flex p-7">
                 <CardTitle className="text-xl font-bold">
-                    Create a new workspace
+                    Create a new project
                 </CardTitle>
             </CardHeader>
             <div className="px-7">
@@ -71,7 +73,7 @@ export const CreateProjectForm = ({onCancel}:createWorkSpaceFormProps) => {
                         render={({field}) => (
                             <FormItem>
                                 <FormLabel>
-                                    Workspace Name
+                                    Project Name
                                 </FormLabel>
                                 <FormControl>
                                     <Input {...field} placeholder="Enter workspace name"/>
@@ -105,7 +107,7 @@ export const CreateProjectForm = ({onCancel}:createWorkSpaceFormProps) => {
                                     )}
                                     <div className="flex flex-col">
                                         <p className="text-sm ">
-                                            Workspace Icon
+                                            Project Icon
                                         </p>
                                         <p className="text-sm text-muted-foreground">
                                             JPG, PNG, SVG or JPEG, Max 1MB
@@ -161,7 +163,7 @@ export const CreateProjectForm = ({onCancel}:createWorkSpaceFormProps) => {
                                 Cancel
                             </Button>
                             <Button type="submit" size="lg" disabled={isPending}>
-                                Create Workspace
+                                Create Project
                             </Button>
                         </div>
                     </form>
