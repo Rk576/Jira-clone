@@ -1,4 +1,4 @@
- "use client"
+"use client"
 
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -11,39 +11,48 @@ import {Button} from "@/components/ui/button";
 import React, {useRef} from "react";
 import Image from "next/image";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {ImageIcon} from "lucide-react";
+import {ArrowLeftIcon, ImageIcon} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
- import {useCreateProject} from "@/features/projects/api/use-create-project";
- import {createProjectSchema} from "@/features/projects/schemas";
- import {useWorkspaceId} from "@/features/workspaces/hooks/use-workspaceId";
+import {useConfirm} from "@/hooks/use-confirm";
+import {useUpdateProject} from "@/features/projects/api/use-update-project";
+import {updateProjectSchema} from "@/features/projects/schemas";
+import {Project} from "@/features/projects/types";
+import {useDeleteProject} from "@/features/projects/api/use-delete-project";
 
-interface CreateProjectFormProps {
+interface EditProjectFormProps {
     onCancel?: () => void;
+    initialValues:Project;
 };
 
-export const CreateProjectForm = ({onCancel}:CreateProjectFormProps) => {
-    const workspaceId=useWorkspaceId();
+export const EditProjectForm = ( {onCancel,initialValues}:EditProjectFormProps) => {
     const router = useRouter();
-    const {mutate, isPending} = useCreateProject();
+    const {mutate, isPending} = useUpdateProject();
+    const {
+        mutate:deleteProject,
+        isPending: isDeletingProject} = useDeleteProject();
+    const [DeleteDialog,confirmDelete] = useConfirm(
+        "Delete Project",
+        "This action cannot be undone",
+        "destructive"
+    );
     const inputRef = useRef<HTMLInputElement>(null);
-    const form = useForm<z.infer<typeof createProjectSchema>> ({
-        resolver: zodResolver(createProjectSchema.omit({workspaceId: true})),
+    const form = useForm<z.infer<typeof updateProjectSchema>> ({
+        resolver: zodResolver(updateProjectSchema),
         defaultValues: {
-            name: "",
+            ...initialValues,
+            image:initialValues.imageUrl ?? "",
         },
     });
 
-    const onSubmit = (values:z.infer<typeof createProjectSchema>)=>{
+    const onSubmit = (values:z.infer<typeof updateProjectSchema>)=>{
         const finalValues = {
             ...values,
-            workspaceId,
             image: values.image instanceof File ? values.image : "",
         }
-        mutate({form:finalValues},{
-            onSuccess:({data})=> {
+        mutate({form:finalValues,param:{projectId:initialValues.$id}},{
+            onSuccess:()=> {
                 form.reset();
-                router.push(`/workspaces/${workspaceId}/projects/${data.$id}`)
             }
         })
     }
@@ -54,11 +63,32 @@ export const CreateProjectForm = ({onCancel}:CreateProjectFormProps) => {
             form.setValue("image",file);
         }
     }
+
+    const handleDelete = async () =>{
+        const ok = await confirmDelete();
+        if(!ok) return;
+        deleteProject({
+            param:{projectId: initialValues.$id},
+        },{
+            onSuccess:()=>{
+                window.location.href = `/workspaces/${initialValues.workspaceId}`;
+            }
+        })
+    }
+
+
+
     return (
+        <div className="flex flex-col gap-y-4">
+            <DeleteDialog/>
         <Card className="w-full h-full border-none shadow-none">
-            <CardHeader className="flex p-7">
+            <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
+                <Button size="sm" variant="secondary" onClick={onCancel ? onCancel:()=>router.push(`/workspaces/${initialValues.workspaceId}/projects/${initialValues.$id}`)}>
+                    <ArrowLeftIcon className="size-4" />
+                    Back
+                </Button>
                 <CardTitle className="text-xl font-bold">
-                    Create a new project
+                    {initialValues.name}
                 </CardTitle>
             </CardHeader>
             <div className="px-7">
@@ -122,21 +152,21 @@ export const CreateProjectForm = ({onCancel}:CreateProjectFormProps) => {
                                         onChange={handleImageChange}
                                         />
                                         {field.value ? (
-                                        <Button
-                                        type="button"
-                                        disabled={isPending}
-                                        variant="destructive"
-                                        size="xs"
-                                        className="w-fit mt-2"
-                                        onClick={()=>{
-                                            field.onChange(null);
-                                            if(inputRef.current){
-                                                inputRef.current.value="";
-                                            }
-                                        }}
-                                        >
-                                            Remove Image
-                                        </Button>
+                                            <Button
+                                                type="button"
+                                                disabled={isPending}
+                                                variant="destructive"
+                                                size="xs"
+                                                className="w-fit mt-2"
+                                                onClick={()=>{
+                                                    field.onChange(null);
+                                                    if(inputRef.current){
+                                                        inputRef.current.value="";
+                                                    }
+                                                }}
+                                            >
+                                                Remove Image
+                                            </Button>
                                         ) : (
                                             <Button
                                                 type="button"
@@ -164,12 +194,25 @@ export const CreateProjectForm = ({onCancel}:CreateProjectFormProps) => {
                                 Cancel
                             </Button>
                             <Button type="submit" size="lg" disabled={isPending}>
-                                Create Project
+                                Save Changes
                             </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
         </Card>
+        <Card className="w-full h-full border-none shadow-none">
+            <CardContent className="p-7">
+                <div className="flex flex-col">
+                    <h3 className="font-bold">Danger Zone</h3>
+                    <p className="text-sm text-muted-foreground">Deleting a project is irreversible and will remove all associated data</p>
+                    <DottedSeparator className="py-7 "/>
+                    <Button className="mt-6 w-fit ml-auto" size="sm" variant="destructive" type="button" disabled={isPending} onClick={handleDelete}>
+                        Delete Project
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+        </div>
     )
 }

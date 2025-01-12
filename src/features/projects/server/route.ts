@@ -6,9 +6,9 @@ import {getMember} from "@/features/members/utils";
 import {DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID, WORKSPACES_ID} from "@/config";
 import {ID, Query} from "node-appwrite";
 import {createProjectSchema, updateProjectSchema} from "@/features/projects/schemas";
-import {MemberRole} from "@/features/members/types";
 import {generateInviteCode} from "@/lib/utils";
 import {Project} from "@/features/projects/types";
+import {MemberRole} from "@/features/members/types";
 
 const app = new Hono()
     .post("/",SessionMiddleWare,zValidator("form",createProjectSchema), async(c)=>{
@@ -135,16 +135,44 @@ const app = new Hono()
             }
             const project = await databases.updateDocument(
                 DATABASE_ID,
-                WORKSPACES_ID,
+                PROJECTS_ID,
                 projectId,
                 {
                     name,
                     imageUrl:uploadedImageUrl,
-                    inviteCode: generateInviteCode(6),
                 },
             )
             return c.json({data:project});
         }
     )
+    .delete("/:projectId", SessionMiddleWare,
+        async(c)=>{
+            const databases= c.get("databases");
+            const user = c.get("user");
+            const{projectId} = c.req.param();
+
+            const existingProject = await databases.getDocument<Project>(
+                DATABASE_ID,
+                PROJECTS_ID,
+                projectId
+            )
+            const member = await getMember({
+                databases,
+                workspaceId:existingProject.workspaceId,
+                userId:user.$id
+            });
+            if(!member){
+                return c.json({error : "Unauthorized"},401);
+            }
+
+            await databases.deleteDocument(
+                DATABASE_ID,
+                PROJECTS_ID,
+                projectId,
+            )
+
+
+            return c.json({data : {$id:existingProject.$id}});
+        } )
 
 export default app;

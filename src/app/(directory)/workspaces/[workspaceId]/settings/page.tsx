@@ -16,14 +16,12 @@ const WorkspaceIdSettingsPage = async({params} :WorkspaceSettingsPageProps ) =>{
         redirect("/sign-in");
     }
 
-    const initalValues =await getWorkspace({workspaceId:params.workspaceId});
+    const initialValues =await getWorkspace({workspaceId:params.workspaceId});
 
-    if(!initalValues){
-        redirect(`/workspaces/${params.workspaceId}`);
-    }
+
     return(
         <div className="w-full lg:max-w-xl">
-            <EditWorkSpaceForm initialValues={initalValues}/>
+            <EditWorkSpaceForm initialValues={initialValues}/>
         </div>
     )
 }
