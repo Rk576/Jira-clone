@@ -11,6 +11,8 @@ import {useQueryState} from "nuqs";
 import {Loader} from "lucide-react";
 import {DataFilters} from "@/features/tasks/components/data-filters";
 import {useTaskFilters} from "@/features/tasks/hooks/use-task-filters";
+import {DataTable} from "@/features/tasks/components/data-table";
+import {columns} from "@/features/tasks/components/columns";
 
 export const TaskViewSwitcher = ()=>{
     const [{
@@ -54,7 +56,7 @@ export const TaskViewSwitcher = ()=>{
                 ) : (
                     <>
                     <TabsContent value="table" className="mt-0">
-                        {JSON.stringify(tasks)}
+                        <DataTable columns={columns} data={tasks?.documents ?? []}/>
                     </TabsContent>
                     <TabsContent value="kanban" className="mt-0">
                         {JSON.stringify(tasks)}
