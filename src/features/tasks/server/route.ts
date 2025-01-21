@@ -212,7 +212,7 @@ const app = new Hono()
           const task = await databases.updateDocument(
               DATABASE_ID,
               TASKS_ID,
-              ID.unique(),
+              taskId,
               {
                 name,
                 status,
