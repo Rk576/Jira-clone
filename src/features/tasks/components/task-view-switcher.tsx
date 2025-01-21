@@ -6,7 +6,7 @@ import {PlusIcon} from "@radix-ui/react-icons";
 import {DottedSeparator} from "@/components/dotted-separator";
 import {useCreateTaskModal} from "@/features/tasks/hooks/use-create-task-modal";
 import {useWorkspaceId} from "@/features/workspaces/hooks/use-workspaceId";
-import {useGetTask} from "@/features/tasks/api/use-get-task";
+import {useGetTasks} from "@/features/tasks/api/use-get-tasks";
 import {useQueryState} from "nuqs";
 import {Loader} from "lucide-react";
 import {DataFilters} from "@/features/tasks/components/data-filters";
@@ -22,7 +22,7 @@ export const TaskViewSwitcher = ()=>{
         defaultValue:"table",
     })
     const workspaceId = useWorkspaceId();
-    const {data:tasks , isLoading:isLoadingTasks} = useGetTask({workspaceId,projectId,assigneeId,status,dueDate});
+    const {data:tasks , isLoading:isLoadingTasks} = useGetTasks({workspaceId,projectId,assigneeId,status,dueDate});
 
     const {open} = useCreateTaskModal();
 
