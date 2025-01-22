@@ -12,7 +12,7 @@ const ErrorPage = ()=>{
                     Chud gaye guru
             </p>
             <Button variant="secondary" size="sm">
-                <Link href="/jira/public">
+                <Link href="/">
                     Lamba saas le bidu
                 </Link>
             </Button>
