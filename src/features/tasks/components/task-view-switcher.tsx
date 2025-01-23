@@ -77,7 +77,7 @@ export const TaskViewSwitcher = ()=>{
                     <TabsContent value="kanban" className="mt-0">
                         <DataKanban data={tasks?.documents ?? []} onChange={onKanbanChange} />
                     </TabsContent>
-                    <TabsContent value="calendar" className="mt-0">
+                    <TabsContent value="calendar" className="mt-0 h-full pb-4">
                         <DataCalendar data={tasks?.documents ?? []}/>
                     </TabsContent>
                 </>
