@@ -3,12 +3,10 @@ import {SessionMiddleWare} from "@/lib/SessionMiddleWare";
 import {zValidator} from "@hono/zod-validator";
 import {z} from 'zod'
 import {getMember} from "@/features/members/utils";
-import {DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID, WORKSPACES_ID} from "@/config";
+import {DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID} from "@/config";
 import {ID, Query} from "node-appwrite";
 import {createProjectSchema, updateProjectSchema} from "@/features/projects/schemas";
-import {generateInviteCode} from "@/lib/utils";
 import {Project} from "@/features/projects/types";
-import {MemberRole} from "@/features/members/types";
 
 const app = new Hono()
     .post("/",SessionMiddleWare,zValidator("form",createProjectSchema), async(c)=>{
@@ -89,6 +87,26 @@ const app = new Hono()
 
         }
         )
+    .get("/:projectId",SessionMiddleWare,async(c)=>{
+      const user = c.get("user");
+      const databases = c.get("databases");
+
+      const {projectId} = c.req.param();
+      const project = await databases.getDocument<Project>(
+          DATABASE_ID,
+          PROJECTS_ID,
+          projectId,
+      )
+      const member = await getMember({
+        databases,
+        workspaceId:project.workspaceId,
+        userId:user.$id,
+      });
+      if(!member){
+        return c.json({error:"Unauthorized"},401);
+      }
+      return c.json({data:project});
+    })
     .patch(
         "/:projectId",SessionMiddleWare,zValidator("form",updateProjectSchema),
         async(c)=>{
