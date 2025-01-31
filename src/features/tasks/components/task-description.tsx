@@ -22,8 +22,8 @@ export const TaskDescription = ({task}: TaskDescriptionProps) => {
     },{
         onSuccess:()=>{
       setIsEditing(false);
-    })
-  }
+    }
+    });
   }
   return (
     <div className="p-4 border rounded-lg">

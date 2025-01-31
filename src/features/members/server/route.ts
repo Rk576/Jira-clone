@@ -6,7 +6,7 @@ import {createAdminClient} from "@/lib/appwrite";
 import {getMember} from "@/features/members/utils";
 import {DATABASE_ID, MEMBERS_ID} from "@/config";
 import {Query} from "node-appwrite";
-import {MemberRole} from "@/features/members/types";
+import {Member, MemberRole} from "@/features/members/types";
 
 const app = new Hono()
     .get("/",SessionMiddleWare , zValidator("query", z.object({workspaceId:z.string()})),
@@ -24,7 +24,7 @@ const app = new Hono()
         if(!member){
                 return c.json({error:"Unauthorized"},401);
         }
-        const members = await databases.listDocuments(
+        const members = await databases.listDocuments<Member>(
             DATABASE_ID,
             MEMBERS_ID,
             [Query.equal("workspaceId",workspaceId)]
