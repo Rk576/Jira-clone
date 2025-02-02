@@ -71,7 +71,7 @@ export const columns: ColumnDef<Task>[]=[
             const assignee = row.original.assignee;
             return(
                 <div className="flex items-center gap-x-2 text-sm font-medium">
-                    <MemberAvatar name={assignee.name} className="size-6" fallbackClassname="text-xs" />
+                    <MemberAvatar name={assignee.name} className="size-6" fallbackClassName="text-xs" />
                     <p className="line-clamp-1">{assignee.name}</p>
                 </div>
             )

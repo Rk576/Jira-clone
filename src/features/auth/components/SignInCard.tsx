@@ -13,7 +13,8 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { loginSchema } from "../schemas";
 import {useLogin} from "@/features/auth/api/use-login";
-
+import {signUpWithGithub} from "@/lib/oauth";
+import {signUpWithGoogle} from "@/lib/oauth";
 
 const SignInCard=()=>{
     const {mutate , isPending}=useLogin();
@@ -77,11 +78,11 @@ const SignInCard=()=>{
                     <DottedSeparator/>
                 </div>
             <CardContent className="px-7 flex flex-col gap-y-4">
-                <Button variant="secondary" size="lg" className="w-full " disabled={isPending}>
+                <Button onClick={()=>signUpWithGoogle()} variant="secondary" size="lg" className="w-full " disabled={isPending}>
                     <FcGoogle className="mr-2 size-5"/>
                     Login with Google
                 </Button>
-                <Button variant="secondary" size="lg" className="w-full " disabled={isPending}>
+                <Button onClick={()=>signUpWithGithub()} variant="secondary" size="lg" className="w-full " disabled={isPending}>
                     <FaGithub className="mr-2 size-5"/>
                     Login with Github
                 </Button>

@@ -203,7 +203,7 @@ export const EditProjectForm = ( {onCancel,initialValues}:EditProjectFormProps) 
                     <h3 className="font-bold">Danger Zone</h3>
                     <p className="text-sm text-muted-foreground">Deleting a project is irreversible and will remove all associated data</p>
                     <DottedSeparator className="py-7 "/>
-                    <Button className="mt-6 w-fit ml-auto" size="sm" variant="destructive" type="button" disabled={isPending} onClick={handleDelete}>
+                    <Button className="mt-6 w-fit ml-auto" size="sm" variant="destructive" type="button" disabled={isPending || isDeletingProject} onClick={handleDelete}>
                         Delete Project
                     </Button>
                 </div>

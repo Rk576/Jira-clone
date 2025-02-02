@@ -1,7 +1,7 @@
 import {cn} from "@/lib/utils";
 import {Avatar , AvatarFallback} from "@/components/ui/avatar";
 
-interface MembersvatarProps {
+interface MemberAvatarProps {
     className?:string;
     name:string;
     fallbackClassName?:string;

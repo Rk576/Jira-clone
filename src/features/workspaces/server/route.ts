@@ -2,7 +2,7 @@ import {Hono} from "hono";
 import {zValidator} from "@hono/zod-validator";
 import {createWorkspaceSchema, updateWorkspaceSchema} from "@/features/workspaces/schemas";
 import {SessionMiddleWare} from "@/lib/SessionMiddleWare";
-import {DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID, WORKSPACES_ID} from "@/config";
+import {DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, TASKS_ID, WORKSPACES_ID} from "@/config";
 import {ID, Query} from "node-appwrite";
 import {MemberRole} from "@/features/members/types";
 import {generateInviteCode} from "@/lib/utils";
@@ -63,7 +63,6 @@ const app = new Hono()
 
     })
     .get("/:workspaceId/info",SessionMiddleWare, async(c)=>{
-      const user = c.get("user");
       const databases = c.get("databases");
       const {workspaceId} = c.req.param();
 
